@@ -1,0 +1,96 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Testimonials from '../components/Testimonials.astro';
+import EnquiryBand from '../components/EnquiryBand.astro';
+import { lorem, photos, studio, unsplash } from '../data/site';
+
+// Shown only when real certificates exist: add { title, issuer, year, image } entries.
+const certificates: { title: string; issuer: string; year: string; image?: string }[] = [];
+const principles = [
+  ['Prvo razgovor', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.'],
+  ['Tehnologija s razlogom', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.'],
+  ['Iskren plan', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat.'],
+];
+---
+<Base title="O meni · Zen" description="Specijalistkinja za tretmane lica i tijela s više od 10 godina iskustva.">
+  <PageHead
+    title="Više od 10 godina"
+    accent="iskustva"
+    lead={lorem.intro}
+    crumbs={[{ label: 'O meni' }]}
+    photo={photos.portrait}
+    photoAlt="Specijalistkinja u studiju (privremena fotografija)"
+  >
+    <p class="signature"><span class="sig-name">{studio.owner}</span><span class="muted">osnivačica studija {studio.name}</span></p>
+  </PageHead>
+
+  <section class="section">
+    <div class="wrap story">
+      <div class="years" aria-hidden="true">10+</div>
+      <div class="prose">
+        <h2 class="zn-heading zn-heading-h2">Moja <em class="zn-accent">priča</em></h2>
+        <p class="lead">{lorem.intro}</p>
+        <p>{lorem.body}</p>
+        <p>{lorem.intro}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section mist" aria-labelledby="pristup-naslov">
+    <div class="wrap">
+      <div class="section-head"><h2 id="pristup-naslov" class="zn-heading zn-heading-h2">Moj <em class="zn-accent">pristup</em></h2></div>
+      <dl class="principles">
+        {principles.map(([t, d], i) => (
+          <div data-reveal style={`--delay: ${i * 80}ms`}><dt>{t}</dt><dd>{d}</dd></div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  {certificates.length > 0 && (
+    <section class="section" aria-labelledby="certifikati-naslov">
+      <div class="wrap">
+        <div class="section-head"><h2 id="certifikati-naslov" class="zn-heading zn-heading-h2">Edukacije i <em class="zn-accent">certifikati</em></h2></div>
+        <ul class="certs">
+          {certificates.map((c) => <li><strong>{c.title}</strong><span>{c.issuer}</span><span>{c.year}</span></li>)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="section studio" aria-labelledby="studio-naslov">
+    <div class="wrap studio-grid">
+      <h2 id="studio-naslov" class="zn-heading zn-heading-h2">Studio</h2>
+      <img class="s1" src={unsplash(photos.studio, 1200, 900)} alt="Prostor studija (privremena fotografija)" loading="lazy" data-reveal />
+      <img class="s2" src={unsplash(photos.studio2, 700, 875)} alt="Detalj iz studija (privremena fotografija)" loading="lazy" data-reveal style="--delay: 120ms" />
+    </div>
+  </section>
+
+  <Testimonials />
+  <EnquiryBand />
+</Base>
+
+<style>
+  .signature { display: grid; gap: var(--space-4); }
+  .sig-name { font: 400 italic 30px/1.1 var(--font-accent); color: var(--leaf); }
+  .story { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-80); align-items: start; }
+  .years { font: 400 italic clamp(120px, 16vw, 220px)/0.85 var(--font-accent); color: var(--sage); letter-spacing: -0.02em; }
+  .prose { display: grid; gap: var(--space-24); max-width: var(--text-max); }
+  .mist { background: var(--surface-mist); }
+  .principles { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-24); }
+  .principles div { display: grid; gap: var(--space-12); align-content: start; padding-top: var(--space-24); border-top: 1px solid var(--ink); }
+  .principles dt { font: 600 20px/28px var(--font-sans); }
+  .principles dd { margin: 0; color: var(--ink-muted); }
+  .certs { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+  .certs li { display: grid; grid-template-columns: 2fr 1.5fr auto; gap: var(--space-24); padding-block: var(--space-16); border-bottom: 1px solid var(--line); }
+  .studio-grid { display: grid; grid-template-columns: 7fr 5fr; gap: var(--space-24); align-items: end; }
+  .studio-grid h2 { grid-column: 1 / -1; margin-bottom: var(--space-24); }
+  .s1 { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .s2 { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  @media (max-width: 900px) {
+    .story { grid-template-columns: 1fr; gap: var(--space-24); }
+    .principles { grid-template-columns: 1fr; gap: var(--space-32); }
+    .studio-grid { grid-template-columns: 1fr; }
+  }
+</style>

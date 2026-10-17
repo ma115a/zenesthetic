@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import EnquiryBand from '../components/EnquiryBand.astro';
+import Icon from '../components/Icon.astro';
+import { studio } from '../data/site';
+---
+<Base title="Kontakt · Zen" description="Pošaljite upit putem forme ili Instagrama. Adresa, telefon i radno vrijeme studija Zen.">
+  <EnquiryBand title="Kontakt i" accent="upit" headingLevel="h1" />
+
+  <section class="section">
+    <div class="wrap info">
+      <div class="block">
+        <h2 class="label">Adresa</h2>
+        <p class="big">{studio.address}</p>
+        <a class="text-link" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(studio.address)}`} target="_blank" rel="noopener">Otvori u mapama <Icon name="arrow-up-right" /></a>
+      </div>
+      <div class="block">
+        <h2 class="label">Telefon i Instagram</h2>
+        <p class="big">{studio.phone}</p>
+        <a class="text-link" href={studio.instagram} target="_blank" rel="noopener">{studio.instagramHandle} <Icon name="arrow-up-right" /></a>
+      </div>
+      <div class="block">
+        <h2 class="label">Radno vrijeme</h2>
+        <dl class="hours">
+          {studio.hours.map(([d, h]) => <div><dt>{d}</dt><dd>{h}</dd></div>)}
+        </dl>
+        <p class="muted small">Tretmani su isključivo uz dogovoren termin.</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .info { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-48); }
+  .block { display: grid; gap: var(--space-16); align-content: start; padding-top: var(--space-24); border-top: 1px solid var(--ink); justify-items: start; }
+  .label { font: 600 11px/16px var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--leaf); }
+  .big { font: 600 22px/30px var(--font-sans); }
+  .hours { margin: 0; display: grid; gap: var(--space-8); width: 100%; }
+  .hours div { display: flex; justify-content: space-between; gap: var(--space-16); padding-bottom: var(--space-8); border-bottom: 1px solid var(--line); }
+  .hours dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .small { font-size: 14px; }
+  @media (max-width: 900px) { .info { grid-template-columns: 1fr; gap: var(--space-32); } }
+</style>

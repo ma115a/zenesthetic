@@ -1,0 +1,181 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import FormStatus from '../components/FormStatus.astro';
+import OrderSteps from '../components/OrderSteps.astro';
+import Icon from '../components/Icon.astro';
+import { products } from '../data/site';
+---
+<Base title="Narudžba proizvoda · Zen" description="Pošaljite narudžbu proizvoda za njegu. Dostupnost i cijenu potvrđujem porukom.">
+  <PageHead
+    title="Narudžba"
+    accent="proizvoda"
+    lead="Odaberite proizvode i količinu. Nema plaćanja na sajtu: nakon narudžbe javljam vam dostupnost, cijenu i način preuzimanja."
+    crumbs={[{ label: 'Proizvodi', href: '/proizvodi' }, { label: 'Narudžba' }]}
+  />
+
+  <section class="section">
+    <div class="wrap grid">
+      <form class="form-panel order" novalidate data-validate data-order>
+        <fieldset>
+          <legend class="zn-field-label">Proizvodi</legend>
+          <ul class="lines" data-lines>
+            <li class="line" data-line>
+              <label class="visually-hidden" for="proizvod-1">Proizvod</label>
+              <select class="zn-field-input" id="proizvod-1" name="proizvod[]" data-product required>
+                <option value="">Odaberite proizvod</option>
+                {products.map((p) => <option value={p.slug} data-price={p.price} data-size={p.size}>{p.name} · {p.size}</option>)}
+              </select>
+              <label class="visually-hidden" for="kolicina-1">Količina</label>
+              <input class="zn-field-input qty" id="kolicina-1" name="kolicina[]" type="number" min="1" max="20" value="1" inputmode="numeric" />
+              <button type="button" class="remove" data-remove aria-label="Ukloni proizvod" hidden><Icon name="close" /></button>
+            </li>
+          </ul>
+          <span class="zn-field-error" id="proizvod-1-error" hidden>Odaberite barem jedan proizvod.</span>
+          <button type="button" class="text-link add" data-add>Dodaj još jedan proizvod <Icon name="arrow-right" /></button>
+        </fieldset>
+
+        <div class="form-row">
+          <div class="zn-field">
+            <label class="zn-field-label" for="ime">Ime i prezime *</label>
+            <input class="zn-field-input" id="ime" name="ime" autocomplete="name" required />
+            <span class="zn-field-error" id="ime-error" hidden>Unesite ime i prezime.</span>
+          </div>
+          <div class="zn-field">
+            <label class="zn-field-label" for="telefon">Telefon *</label>
+            <input class="zn-field-input" id="telefon" name="telefon" type="tel" autocomplete="tel" inputmode="tel" required />
+            <span class="zn-field-error" id="telefon-error" hidden>Unesite broj telefona za potvrdu narudžbe.</span>
+          </div>
+        </div>
+
+        <fieldset class="delivery">
+          <legend class="zn-field-label">Preuzimanje</legend>
+          <label class="option"><input type="radio" name="preuzimanje" value="studio" checked data-delivery /> <span><strong>U studiju</strong> Preuzimate kada vam odgovara.</span></label>
+          <label class="option"><input type="radio" name="preuzimanje" value="dostava" data-delivery /> <span><strong>Dostava na adresu</strong> Cijenu dostave javljam uz potvrdu.</span></label>
+        </fieldset>
+
+        <div class="zn-field" data-address hidden>
+          <label class="zn-field-label" for="adresa">Adresa za dostavu *</label>
+          <input class="zn-field-input" id="adresa" name="adresa" autocomplete="street-address" />
+          <span class="zn-field-error" id="adresa-error" hidden>Unesite adresu za dostavu.</span>
+        </div>
+
+        <div class="zn-field">
+          <label class="zn-field-label" for="napomena">Napomena</label>
+          <textarea class="zn-field-input" id="napomena" name="napomena" rows="3"></textarea>
+        </div>
+
+        <FormStatus />
+        <button class="zn-btn zn-btn-block" type="submit">Pošalji narudžbu</button>
+        <p class="form-note">Slanjem pristajete da vas kontaktiram u vezi s narudžbom. <a href="/privatnost">Politika privatnosti</a></p>
+      </form>
+
+      <aside class="summary" aria-labelledby="pregled-naslov">
+        <h2 id="pregled-naslov" class="summary-title">Pregled narudžbe</h2>
+        <ul class="summary-list" data-summary><li class="empty">Još niste odabrali proizvod.</li></ul>
+        <p class="summary-note">Cijene su informativne. Konačnu cijenu i dostupnost potvrđujem porukom.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section mist">
+    <div class="wrap"><OrderSteps /></div>
+  </section>
+</Base>
+
+<script>
+  import { initForms } from '../scripts/forms';
+
+  const form = document.querySelector<HTMLFormElement>('[data-order]')!;
+  const lines = form.querySelector<HTMLUListElement>('[data-lines]')!;
+  const template = lines.querySelector<HTMLLIElement>('[data-line]')!.cloneNode(true) as HTMLLIElement;
+  const summary = document.querySelector<HTMLUListElement>('[data-summary]')!;
+  let n = 1;
+
+  const renderSummary = () => {
+    const items = [...lines.querySelectorAll<HTMLLIElement>('[data-line]')]
+      .map((li) => {
+        const sel = li.querySelector<HTMLSelectElement>('[data-product]')!;
+        const opt = sel.selectedOptions[0];
+        const qty = li.querySelector<HTMLInputElement>('.qty')!.value || '1';
+        return sel.value ? { name: opt.textContent!.split(' · ')[0], size: opt.dataset.size, price: opt.dataset.price, qty } : null;
+      })
+      .filter(Boolean) as { name: string; size: string; price: string; qty: string }[];
+    summary.replaceChildren(...(items.length ? items.map((i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span><strong></strong><span class="meta"></span></span><span class="qty-out"></span>`;
+      li.querySelector('strong')!.textContent = i.name;
+      li.querySelector('.meta')!.textContent = `${i.size} · ${i.price}`;
+      li.querySelector('.qty-out')!.textContent = `× ${i.qty}`;
+      return li;
+    }) : [Object.assign(document.createElement('li'), { className: 'empty', textContent: 'Još niste odabrali proizvod.' })]));
+  };
+
+  const syncRemove = () => {
+    const all = lines.querySelectorAll('[data-line]');
+    all.forEach((li) => { li.querySelector<HTMLButtonElement>('[data-remove]')!.hidden = all.length === 1; });
+  };
+
+  form.querySelector('[data-add]')!.addEventListener('click', () => {
+    n += 1;
+    const li = template.cloneNode(true) as HTMLLIElement;
+    const sel = li.querySelector<HTMLSelectElement>('select')!;
+    const qty = li.querySelector<HTMLInputElement>('.qty')!;
+    sel.id = `proizvod-${n}`; sel.required = false; li.querySelector('label[for^="proizvod"]')!.setAttribute('for', sel.id);
+    qty.id = `kolicina-${n}`; li.querySelector('label[for^="kolicina"]')!.setAttribute('for', qty.id);
+    lines.append(li);
+    syncRemove();
+    sel.focus();
+  });
+  lines.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-remove]');
+    if (!btn) return;
+    btn.closest('[data-line]')!.remove();
+    syncRemove();
+    renderSummary();
+  });
+  lines.addEventListener('change', renderSummary);
+  lines.addEventListener('input', renderSummary);
+
+  const address = form.querySelector<HTMLElement>('[data-address]')!;
+  const addressInput = address.querySelector('input')!;
+  form.querySelectorAll<HTMLInputElement>('[data-delivery]').forEach((r) => r.addEventListener('change', () => {
+    const ship = r.checked && r.value === 'dostava';
+    address.hidden = !ship;
+    addressInput.required = ship;
+  }));
+
+  // Preselect a product from ?proizvod=
+  const wanted = new URLSearchParams(location.search).get('proizvod');
+  const first = lines.querySelector<HTMLSelectElement>('[data-product]')!;
+  if (wanted && [...first.options].some((o) => o.value === wanted)) first.value = wanted;
+  renderSummary();
+  initForms();
+</script>
+
+<style>
+  .grid { display: grid; grid-template-columns: 7fr 4fr; gap: var(--space-80); align-items: start; }
+  .order { padding: 0; background: none; }
+  fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: var(--space-12); }
+  legend { margin-bottom: var(--space-12); }
+  .lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-8); }
+  .line { display: grid; grid-template-columns: 1fr 88px auto; gap: var(--space-8); align-items: center; }
+  .remove { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+  .remove:hover { border-color: var(--ink); }
+  .add { justify-self: start; background: none; border: 0; border-bottom: 1px solid currentColor; cursor: pointer; color: var(--ink); }
+  .delivery { gap: var(--space-8); }
+  .option { display: flex; gap: var(--space-12); align-items: start; padding: var(--space-16); border: 1px solid var(--line); cursor: pointer; font-size: 15px; line-height: 22px; color: var(--ink-muted); }
+  .option strong { display: block; color: var(--ink); font-weight: 600; }
+  .option:has(input:checked) { border-color: var(--ink); background: var(--surface-mist); }
+  .option input { margin-top: 4px; width: 18px; height: 18px; }
+  .summary { position: sticky; top: 104px; background: var(--surface-mist); padding: var(--space-32); display: grid; gap: var(--space-16); }
+  .summary-title { font: 600 13px/16px var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; }
+  .summary-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+  .summary-list :global(li) { display: flex; justify-content: space-between; gap: var(--space-16); padding-block: var(--space-12); border-bottom: 1px solid var(--line); font-size: 15px; line-height: 22px; }
+  .summary-list :global(li > span:first-child) { display: grid; }
+  .summary-list :global(.meta) { color: var(--ink-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .summary-list :global(.empty) { color: var(--ink-muted); }
+  .summary-note { font-size: 13px; line-height: 20px; color: var(--ink-muted); }
+  .mist { background: var(--surface-mist); }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; gap: var(--space-48); } .summary { position: static; order: -1; } }
+</style>

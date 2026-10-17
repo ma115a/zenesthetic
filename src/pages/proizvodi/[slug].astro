@@ -1,0 +1,82 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import OrderSteps from '../../components/OrderSteps.astro';
+import Icon from '../../components/Icon.astro';
+import { products, areaLabel, lorem, unsplash, treatmentList, type Product } from '../../data/site';
+
+export function getStaticPaths() {
+  return products.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props as { p: Product };
+const related = products.filter((x) => x.slug !== p.slug && x.area === p.area).slice(0, 4);
+const pairs = treatmentList.filter((t) => t.area === p.area).slice(0, 2);
+---
+<Base title={`${p.name} · Proizvodi · Zen`} description={p.summary}>
+  <section class="product section">
+    <div class="wrap grid">
+      <div class="photo">
+        <img src={unsplash(p.photo, 1100, 1375)} alt={`${p.name}, ${p.size} (privremena fotografija)`} fetchpriority="high" />
+      </div>
+      <div class="info">
+        <nav class="crumbs" aria-label="Putanja">
+          <a href="/">Početna</a><span aria-hidden="true">/</span><a href="/proizvodi">Proizvodi</a><span aria-hidden="true">/</span><span aria-current="page">{p.name}</span>
+        </nav>
+        <h1 class="zn-heading zn-heading-h2 title">{p.name}</h1>
+        <p class="price"><span>{p.size}</span><span>{p.price}</span></p>
+        <p class="lead">{p.summary} {lorem.intro}</p>
+        <a class="zn-btn zn-btn-block" href={`/narudzba?proizvod=${p.slug}`}>Naruči <Icon name="arrow-right" /></a>
+        <p class="note">Nema plaćanja na sajtu. Nakon narudžbe javljam vam dostupnost i način preuzimanja.</p>
+        <div class="details">
+          <details open><summary>Primjena<span class="plus" aria-hidden="true"></span></summary><p>{lorem.body}</p></details>
+          <details><summary>Sastojci<span class="plus" aria-hidden="true"></span></summary><p>{lorem.intro}</p></details>
+          <details><summary>Za koga je<span class="plus" aria-hidden="true"></span></summary><p>Za njegu: {areaLabel[p.area].toLowerCase()}. {lorem.body}</p></details>
+        </div>
+        {pairs.length > 0 && (
+          <p class="pairs">Preporučujem uz: {pairs.map((t, i) => <>{i > 0 && ', '}<a href={`/tretmani/${t.slug}`}>{t.name}</a></>)}</p>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="section mist" aria-labelledby="kako-naslov">
+    <div class="wrap">
+      <div class="section-head"><h2 id="kako-naslov" class="zn-heading zn-heading-h2">Kako <em class="zn-accent">naručiti</em></h2></div>
+      <OrderSteps />
+    </div>
+  </section>
+
+  {related.length > 0 && (
+    <section class="section" aria-labelledby="jos-naslov">
+      <div class="wrap">
+        <div class="section-head"><h2 id="jos-naslov" class="zn-heading zn-heading-h2">Iz iste <em class="zn-accent">linije</em></h2><a class="text-link" href="/proizvodi">Svi proizvodi <Icon name="arrow-right" /></a></div>
+        <div class="product-grid">{related.map((r, i) => <ProductCard product={r} delay={i * 80} />)}</div>
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .product { padding-top: var(--space-48); }
+  .grid { display: grid; grid-template-columns: 7fr 5fr; gap: var(--space-80); align-items: start; }
+  .photo { background: var(--surface-mist); }
+  .photo img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .info { position: sticky; top: 104px; display: grid; gap: var(--space-24); }
+  .title { font-size: clamp(32px, 3.6vw, 48px); }
+  .price { display: flex; justify-content: space-between; padding-block: var(--space-16); border-block: 1px solid var(--line); font: 600 18px/26px var(--font-sans); font-variant-numeric: tabular-nums; }
+  .price span:first-child { color: var(--ink-muted); font-weight: 400; }
+  .note { font-size: 14px; line-height: 22px; color: var(--ink-muted); }
+  .details { border-top: 1px solid var(--ink); }
+  details { border-bottom: 1px solid var(--line); }
+  summary { display: flex; justify-content: space-between; align-items: center; padding-block: var(--space-16); cursor: pointer; list-style: none; font: 600 13px/16px var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; }
+  summary::-webkit-details-marker { display: none; }
+  .plus { position: relative; width: 14px; height: 14px; }
+  .plus::before, .plus::after { content: ''; position: absolute; left: 0; top: 6.25px; width: 14px; height: 1.5px; background: var(--ink); transition: transform 300ms var(--ease-out); }
+  .plus::after { transform: rotate(90deg); }
+  details[open] .plus::after { transform: rotate(0deg); }
+  details p { padding-bottom: var(--space-16); color: var(--ink-muted); font-size: 15px; line-height: 24px; }
+  .pairs { font-size: 15px; }
+  .pairs a { color: var(--leaf); font-weight: 600; }
+  .mist { background: var(--surface-mist); }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; gap: var(--space-32); } .info { position: static; } .photo img { aspect-ratio: 1; } }
+</style>

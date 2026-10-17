@@ -1,0 +1,66 @@
+---
+import Icon from './Icon.astro';
+import FormStatus from './FormStatus.astro';
+import { studio, treatmentList } from '../data/site';
+
+interface Props { selected?: string; title?: string; accent?: string; headingLevel?: 'h1' | 'h2' }
+const { selected = '', title = 'Pošaljite', accent = 'upit', headingLevel = 'h2' } = Astro.props;
+const H = headingLevel;
+---
+<section id="upit" class="enquiry section" aria-labelledby="upit-naslov">
+  <div class="wrap enquiry-grid">
+    <div class="enquiry-copy">
+      <H id="upit-naslov" class="zn-heading zn-heading-h2">{title} <em class="zn-accent">{accent}</em></H>
+      <p class="lead">Recite mi šta vas zanima i kada vam odgovara. Možete mi pisati i na Instagramu.</p>
+      <a class="zn-btn" href={studio.instagram} target="_blank" rel="noopener"><Icon name="instagram" />Pišite na Instagramu</a>
+      <ul class="enquiry-details">
+        <li><Icon name="phone" />{studio.phone}</li>
+        <li><Icon name="pin" />{studio.address}</li>
+      </ul>
+    </div>
+
+    <form class="form-panel" novalidate data-validate>
+      <div class="zn-field">
+        <label class="zn-field-label" for="ime">Ime i prezime *</label>
+        <input class="zn-field-input" id="ime" name="ime" autocomplete="name" required />
+        <span class="zn-field-error" id="ime-error" hidden>Unesite ime i prezime.</span>
+      </div>
+      <div class="zn-field">
+        <label class="zn-field-label" for="telefon">Telefon *</label>
+        <input class="zn-field-input" id="telefon" name="telefon" type="tel" autocomplete="tel" inputmode="tel" required />
+        <span class="zn-field-error" id="telefon-error" hidden>Unesite broj telefona da vas mogu pozvati.</span>
+      </div>
+      <div class="zn-field">
+        <label class="zn-field-label" for="tretman">Tretman</label>
+        <select class="zn-field-input" id="tretman" name="tretman">
+          <option value="">Nisam sigurna, trebam savjet</option>
+          {treatmentList.map((t) => <option value={t.slug} selected={t.slug === selected}>{t.name}</option>)}
+        </select>
+      </div>
+      <div class="zn-field">
+        <label class="zn-field-label" for="poruka">Poruka</label>
+        <textarea class="zn-field-input" id="poruka" name="poruka" rows="4" aria-describedby="poruka-hint"></textarea>
+        <span class="zn-field-hint" id="poruka-hint">Na primjer: koji termin vam odgovara.</span>
+      </div>
+      <FormStatus />
+      <button class="zn-btn zn-btn-block" type="submit">Pošalji upit</button>
+      <p class="form-note">Slanjem pristajete da vas kontaktiram u vezi s upitom. <a href="/privatnost">Politika privatnosti</a></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  import { initForms } from '../scripts/forms';
+  initForms();
+</script>
+
+<style>
+  .enquiry { background: var(--sage); scroll-margin-top: 64px; }
+  .enquiry ::selection { background: var(--ink); color: var(--on-ink); }
+  .enquiry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-80); align-items: start; }
+  .enquiry-copy { display: grid; gap: var(--space-24); justify-items: start; position: sticky; top: 104px; }
+  .enquiry .lead { color: var(--ink); }
+  .enquiry-details { list-style: none; margin: var(--space-8) 0 0; padding: 0; display: grid; gap: var(--space-8); font-size: 15px; }
+  .enquiry-details li { display: flex; align-items: center; gap: var(--space-12); }
+  @media (max-width: 900px) { .enquiry-grid { grid-template-columns: 1fr; gap: var(--space-48); } .enquiry-copy { position: static; } }
+</style>

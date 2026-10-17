@@ -1,0 +1,21 @@
+---
+const steps = [
+  ['Pošaljite narudžbu', 'Odaberite proizvode i količinu u formi za narudžbu.'],
+  ['Potvrda', 'Javljam vam dostupnost, cijenu i način preuzimanja.'],
+  ['Preuzimanje', 'Proizvode preuzimate u studiju ili ih šaljem na vašu adresu.'],
+];
+---
+<ol class="order-steps">
+  {steps.map(([t, d], i) => (
+    <li><span class="num">{String(i + 1).padStart(2, '0')}</span><span><strong>{t}</strong>{d}</span></li>
+  ))}
+</ol>
+
+<style>
+  .order-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-24); }
+  li { display: flex; gap: var(--space-16); align-items: start; padding-top: var(--space-16); border-top: 1px solid var(--ink); font-size: 15px; line-height: 24px; color: var(--ink-muted); }
+  li span:last-child { display: grid; gap: 2px; }
+  strong { color: var(--ink); font-weight: 600; }
+  .num { font: 400 italic 28px/1 var(--font-accent); color: var(--leaf); }
+  @media (max-width: 760px) { .order-steps { grid-template-columns: 1fr; } }
+</style>

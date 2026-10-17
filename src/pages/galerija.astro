@@ -1,0 +1,140 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import EnquiryBand from '../components/EnquiryBand.astro';
+import Icon from '../components/Icon.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import { galleryItems, areaLabel, unsplash, beforeAfter } from '../data/site';
+const count = (a: string) => galleryItems.filter((g) => g.area === a).length;
+---
+<Base title="Galerija · Zen" description="Fotografije tretmana lica i tijela iz studija Zen.">
+  <PageHead
+    title="Galerija"
+    accent="rezultata"
+    lead="Fotografije iz studija. Fotografije prije i poslije objavljujem samo uz pisanu saglasnost klijentice."
+    crumbs={[{ label: 'Galerija' }]}
+  />
+
+  <section class="section results" aria-labelledby="prije-naslov">
+    <div class="wrap results-grid">
+      <div class="results-copy">
+        <h2 id="prije-naslov" class="zn-heading zn-heading-h2">Prije i <em class="zn-accent">poslije</em></h2>
+        <p class="lead">Povucite liniju lijevo i desno da uporedite. Uz svaki par piše tretman i broj tretmana.</p>
+        <div class="pairs" role="group" aria-label="Odaberite rezultat">
+          {beforeAfter.map((b, i) => (
+            <button type="button" class="pair" aria-pressed={i === 0 ? 'true' : 'false'} data-pair={i}>
+              <span class="pair-name">{b.treatment}</span>
+              <span class="pair-meta">{areaLabel[b.area]} · {b.sessions}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div class="results-stage">
+        {beforeAfter.map((b, i) => (
+          <div data-pair-panel={i} hidden={i !== 0}><BeforeAfter pair={b} ratio="4 / 5" width={1100} id={`ba-${i}`} /></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2 class="zn-heading zn-heading-h2 gal-title">Iz <em class="zn-accent">studija</em></h2>
+      <div class="toolbar" role="group" aria-label="Filtriraj fotografije">
+        <button type="button" class="chip" aria-pressed="true" data-filter="sve">Sve <span>{galleryItems.length}</span></button>
+        <button type="button" class="chip" aria-pressed="false" data-filter="lice">Lice <span>{count('lice')}</span></button>
+        <button type="button" class="chip" aria-pressed="false" data-filter="tijelo">Tijelo <span>{count('tijelo')}</span></button>
+      </div>
+
+      <ul class="masonry" data-gallery>
+        {galleryItems.map((g, i) => (
+          <li data-area={g.area} data-reveal style={`--delay: ${(i % 3) * 80}ms`}>
+            <button type="button" class="tile" data-open={i} aria-label={`Otvori fotografiju: ${g.alt}`}>
+              <img src={unsplash(g.photo, 800, i % 3 === 1 ? 1000 : i % 3 === 2 ? 800 : 1067)} alt={g.alt} loading="lazy" />
+            </button>
+            <p class="cap"><span>{g.treatment}</span><span class="muted">{areaLabel[g.area]}</span></p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <dialog class="lightbox" data-lightbox aria-label="Pregled fotografije">
+    <figure>
+      <img data-lb-img src={unsplash(galleryItems[0].photo, 1800)} alt={galleryItems[0].alt} />
+      <figcaption data-lb-cap></figcaption>
+    </figure>
+    <button type="button" class="lb-btn lb-close" data-lb-close aria-label="Zatvori"><Icon name="close" size={22} /></button>
+    <button type="button" class="lb-btn lb-prev" data-lb-prev aria-label="Prethodna fotografija"><Icon name="arrow-right" size={22} /></button>
+    <button type="button" class="lb-btn lb-next" data-lb-next aria-label="Sljedeća fotografija"><Icon name="arrow-right" size={22} /></button>
+  </dialog>
+
+  <EnquiryBand />
+</Base>
+
+<script>
+  const pairBtns = [...document.querySelectorAll<HTMLButtonElement>('[data-pair]')];
+  const panels = [...document.querySelectorAll<HTMLElement>('[data-pair-panel]')];
+  pairBtns.forEach((b) => b.addEventListener('click', () => {
+    pairBtns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    panels.forEach((p) => { p.hidden = p.dataset.pairPanel !== b.dataset.pair; });
+  }));
+</script>
+
+<script define:vars={{ items: galleryItems.map((g) => ({ src: unsplash(g.photo, 1800), alt: g.alt, cap: g.treatment })) }}>
+  const buttons = [...document.querySelectorAll('[data-filter]')];
+  const cells = [...document.querySelectorAll('[data-gallery] > li')];
+  buttons.forEach((b) => b.addEventListener('click', () => {
+    buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    cells.forEach((c) => { c.hidden = b.dataset.filter !== 'sve' && c.dataset.area !== b.dataset.filter; });
+  }));
+
+  const dlg = document.querySelector('[data-lightbox]');
+  const img = dlg.querySelector('[data-lb-img]');
+  const cap = dlg.querySelector('[data-lb-cap]');
+  let at = 0;
+  const visible = () => cells.filter((c) => !c.hidden).map((c) => Number(c.querySelector('[data-open]').dataset.open));
+  const show = (i) => { at = i; img.src = items[i].src; img.alt = items[i].alt; cap.textContent = items[i].cap; };
+  const step = (d) => { const v = visible(); const k = v.indexOf(at); show(v[(k + d + v.length) % v.length]); };
+  document.querySelectorAll('[data-open]').forEach((b) => b.addEventListener('click', () => { show(Number(b.dataset.open)); dlg.showModal(); }));
+  dlg.querySelector('[data-lb-close]').addEventListener('click', () => dlg.close());
+  dlg.querySelector('[data-lb-prev]').addEventListener('click', () => step(-1));
+  dlg.querySelector('[data-lb-next]').addEventListener('click', () => step(1));
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); });
+</script>
+
+<style>
+  .results { background: var(--surface-mist); }
+  .results-grid { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-80); align-items: center; }
+  .results-copy { display: grid; gap: var(--space-24); align-content: center; }
+  .pairs { display: grid; border-top: 1px solid var(--ink); }
+  .pair { display: grid; gap: 2px; text-align: left; padding: var(--space-16) 0; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--ink); cursor: pointer; font: inherit; }
+  .pair-name { font: 600 18px/26px var(--font-sans); }
+  .pair-meta { font-size: 14px; line-height: 20px; color: var(--ink-muted); }
+  .pair[aria-pressed='true'] .pair-name { color: var(--leaf); }
+  .pair[aria-pressed='true'] { border-bottom-color: var(--ink); }
+  .pair:hover .pair-name { text-decoration: underline; text-underline-offset: 0.2em; }
+  .gal-title { margin-bottom: var(--space-32); }
+  @media (max-width: 900px) { .results-grid { grid-template-columns: 1fr; gap: var(--space-32); } .results-stage { order: -1; } }
+  .masonry { list-style: none; margin: 0; padding: 0; columns: 3; column-gap: var(--space-24); }
+  .masonry li { break-inside: avoid; margin-bottom: var(--space-32); }
+  .tile { display: block; width: 100%; padding: 0; border: 0; background: var(--surface-mist); cursor: zoom-in; overflow: hidden; }
+  .tile img { width: 100%; height: auto; transition: transform 900ms var(--ease-out); }
+  .tile:hover img { transform: scale(1.04); }
+  .cap { display: flex; justify-content: space-between; gap: var(--space-16); padding-top: var(--space-12); font-size: 14px; line-height: 20px; font-weight: 600; }
+  .cap .muted { font-weight: 400; }
+  .lightbox { width: min(1100px, calc(100vw - 32px)); max-height: calc(100vh - 32px); padding: 0; border: 0; background: var(--surface); color: var(--ink); overflow: visible; }
+  .lightbox::backdrop { background: #1f2a24e6; }
+  .lightbox figure { margin: 0; }
+  .lightbox img { width: 100%; max-height: calc(100vh - 120px); object-fit: contain; background: var(--surface-mist); }
+  .lightbox figcaption { padding: var(--space-16) var(--space-24); font-weight: 600; }
+  .lb-btn { position: absolute; display: grid; place-items: center; width: 48px; height: 48px; border: 0; background: var(--surface); color: var(--ink); cursor: pointer; }
+  .lb-btn:hover { background: var(--ink); color: var(--on-ink); }
+  .lb-close { top: 0; right: 0; }
+  .lb-prev, .lb-next { top: 50%; transform: translateY(-50%); }
+  .lb-prev { left: 0; } .lb-prev :global(svg) { transform: scaleX(-1); }
+  .lb-next { right: 0; }
+  @media (max-width: 900px) { .masonry { columns: 2; column-gap: var(--space-16); } }
+  @media (max-width: 520px) { .masonry { columns: 1; } }
+</style>

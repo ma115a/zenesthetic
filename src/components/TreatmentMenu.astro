@@ -1,0 +1,110 @@
+---
+import Icon from './Icon.astro';
+import { unsplash, treatments } from '../data/site';
+
+const all = [...treatments.face, ...treatments.body];
+const columns = [['Lice', treatments.face], ['Tijelo', treatments.body]] as const;
+---
+<div class="menu-grid" data-menu-grid>
+  {columns.map(([title, list], col) => (
+    <div class="menu-col" id={col === 0 ? 'lice' : 'tijelo'}>
+      <h3 class="menu-col-title"><span>{title}</span><span class="count">{list.length} tretmana</span></h3>
+      <ul>
+        {list.map((t, i) => (
+          <li data-reveal style={`--delay: ${i * 60}ms`}>
+            <a class="menu-row" href={`/tretmani/${t.slug}`} data-index={col === 0 ? i : treatments.face.length + i}>
+              <span class="row-thumb" aria-hidden="true"><img src={unsplash(t.photo, 160, 200)} alt="" loading="lazy" /></span>
+              <span class="row-name">{t.name}</span>
+              <span class="row-meta"><Icon name="clock" size={14} />{t.duration}<span aria-hidden="true">·</span>{t.sessions}</span>
+              <span class="row-arrow"><Icon name="arrow-up-right" /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+
+  <figure class="menu-photo" aria-hidden="true">
+    {all.map((t, i) => (
+      <img class:list={{ active: i === 0 }} src={unsplash(t.photo, 800, 1000)} alt="" loading={i === 0 ? 'eager' : 'lazy'} data-photo={i} />
+    ))}
+    <figcaption>
+      {all.map((t, i) => (
+        <span class:list={{ active: i === 0 }} data-caption={i}><strong>{t.name}</strong>{t.summary}</span>
+      ))}
+    </figcaption>
+  </figure>
+</div>
+
+<script>
+  // Hovering or focusing a row swaps the photo and caption.
+  const grid = document.querySelector('[data-menu-grid]');
+  if (grid) {
+    const photos = [...grid.querySelectorAll<HTMLImageElement>('[data-photo]')];
+    const captions = [...grid.querySelectorAll<HTMLElement>('[data-caption]')];
+    const rows = [...grid.querySelectorAll<HTMLElement>('.menu-row')];
+    let current = 0;
+    const show = (i: number) => {
+      if (i === current) return;
+      photos[current]?.classList.remove('active');
+      captions[current]?.classList.remove('active');
+      rows[current]?.classList.remove('is-active');
+      photos[i]?.classList.add('active');
+      captions[i]?.classList.add('active');
+      rows[i]?.classList.add('is-active');
+      current = i;
+    };
+    rows[0]?.classList.add('is-active');
+    rows.forEach((row) => {
+      const i = Number(row.dataset.index);
+      row.addEventListener('pointerenter', () => show(i));
+      row.addEventListener('focus', () => show(i));
+    });
+  }
+</script>
+
+<style>
+  .menu-grid { display: grid; grid-template-columns: 1fr 1fr minmax(260px, 0.85fr); gap: var(--space-48); align-items: start; }
+  .menu-col { scroll-margin-top: 104px; }
+  .menu-col-title { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: var(--space-16); border-bottom: 1px solid var(--ink); font: 700 13px/16px var(--font-sans); letter-spacing: 0.2em; text-transform: uppercase; }
+  .menu-col-title .count { font-weight: 500; letter-spacing: 0.08em; text-transform: none; color: var(--ink-muted); font-size: 13px; }
+  .menu-col ul { list-style: none; margin: 0; padding: 0; position: relative; z-index: 0; }
+  .menu-row { position: relative; display: grid; grid-template-columns: 1fr auto; grid-template-areas: 'name arrow' 'meta arrow'; column-gap: var(--space-16); row-gap: var(--space-4); padding: var(--space-24) 0; border-bottom: 1px solid var(--line); text-decoration: none; }
+  .row-name, .row-meta { transition: transform 400ms var(--ease-out); }
+  .menu-row::before { content: ''; position: absolute; inset: 0 calc(-1 * var(--space-16)); background: var(--surface-mist); opacity: 0; transition: opacity 300ms ease; z-index: -1; }
+  .menu-row.is-active .row-name, .menu-row.is-active .row-meta { transform: translateX(var(--space-8)); }
+  .menu-row.is-active::before, .menu-row:hover::before { opacity: 1; }
+  .row-thumb { display: none; grid-area: thumb; width: 56px; height: 70px; overflow: hidden; background: var(--surface-mist); }
+  .row-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  :global(.reveal-armed) .row-thumb img { clip-path: inset(0 0 100% 0); }
+  :global(.reveal-in) .row-thumb img { clip-path: inset(0); transition: clip-path 800ms var(--ease-out) calc(var(--delay, 0ms) + 150ms); }
+  .row-name { grid-area: name; font: 600 22px/28px var(--font-sans); letter-spacing: -0.01em; }
+  .row-meta { grid-area: meta; display: inline-flex; align-items: center; gap: var(--space-8); font-size: 14px; line-height: 22px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .row-meta :global(svg) { color: var(--leaf); }
+  .row-arrow { grid-area: arrow; align-self: center; display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--line); transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease; }
+  .menu-row.is-active .row-arrow, .menu-row:hover .row-arrow { background: var(--ink); border-color: var(--ink); color: var(--on-ink); }
+  .menu-photo { position: sticky; top: 104px; margin: 0; }
+  .menu-photo img { position: absolute; inset: 0; width: 100%; aspect-ratio: 4 / 5; height: auto; object-fit: cover; opacity: 0; clip-path: inset(0 0 100% 0); transition: opacity 500ms ease, clip-path 700ms var(--ease-out); }
+  .menu-photo img.active { position: relative; opacity: 1; clip-path: inset(0); }
+  .menu-photo img:not(.active) { pointer-events: none; }
+  .menu-photo figcaption { display: grid; margin-top: var(--space-16); min-height: 66px; }
+  .menu-photo figcaption span { grid-area: 1 / 1; display: grid; gap: var(--space-4); font-size: 14px; line-height: 22px; color: var(--ink-muted); opacity: 0; transition: opacity 300ms ease; }
+  .menu-photo figcaption span.active { opacity: 1; }
+  .menu-photo figcaption strong { color: var(--ink); font-weight: 600; font-size: 15px; }
+  @media (prefers-reduced-motion: reduce) { .menu-photo img { transition: none; clip-path: none; } .row-name, .row-meta { transition: none; } }
+  @media (max-width: 1020px) {
+    .menu-grid { grid-template-columns: 1fr 1fr; }
+    .menu-photo { display: none; }
+    .menu-row { grid-template-columns: auto 1fr auto; grid-template-areas: 'thumb name arrow' 'thumb meta arrow'; align-items: center; }
+    .row-thumb { display: block; }
+    .row-name { align-self: end; }
+    .row-meta { align-self: start; }
+  }
+  @media (max-width: 680px) {
+    .menu-grid { grid-template-columns: 1fr; gap: var(--space-48); }
+    .row-name { font-size: 20px; }
+    .menu-row.is-active .row-name, .menu-row.is-active .row-meta { transform: none; }
+    .menu-row.is-active::before { opacity: 0; }
+    .menu-row.is-active .row-arrow { background: none; color: var(--ink); border-color: var(--line); }
+  }
+</style>

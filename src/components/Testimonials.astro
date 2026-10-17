@@ -1,0 +1,28 @@
+---
+import { testimonials } from '../data/site';
+---
+<section class="quotes section" aria-labelledby="utisci-naslov">
+  <div class="wrap">
+    <h2 id="utisci-naslov" class="zn-heading zn-heading-h2">Šta kažu <em class="zn-accent">klijentice</em></h2>
+    <div class="quote-grid">
+      {testimonials.map((t, i) => (
+        <figure class:list={['quote', { big: i === 0 }]} data-reveal style={`--delay: ${i * 100}ms`}>
+          <blockquote><p>{t.quote}</p></blockquote>
+          <figcaption><span>{t.name}</span><span class="muted">{t.treatment}</span></figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .quotes { background: var(--surface-mist); }
+  .quote-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: var(--space-48); margin-top: var(--space-48); border-top: 1px solid var(--ink); padding-top: var(--space-32); }
+  .quote { margin: 0; display: grid; gap: var(--space-24); align-content: space-between; }
+  .quote blockquote { margin: 0; }
+  .quote p { font-size: 17px; line-height: 28px; }
+  .quote.big p { font: 400 italic 30px/1.25 var(--font-accent); color: var(--ink); }
+  .quote figcaption { display: grid; gap: 2px; font-size: 14px; line-height: 20px; font-weight: 600; }
+  .quote figcaption .muted { font-weight: 400; }
+  @media (max-width: 900px) { .quote-grid { grid-template-columns: 1fr; gap: var(--space-32); } .quote + .quote { border-top: 1px solid var(--line); padding-top: var(--space-32); } }
+</style>

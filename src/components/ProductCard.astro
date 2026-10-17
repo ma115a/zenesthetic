@@ -1,0 +1,22 @@
+---
+import Icon from './Icon.astro';
+import { unsplash, type Product } from '../data/site';
+
+interface Props { product: Product; delay?: number }
+const { product: p, delay = 0 } = Astro.props;
+---
+<article class="zn-product" data-reveal style={`--delay: ${delay}ms`}>
+  <a class="zn-card" href={`/proizvodi/${p.slug}`}>
+    <div class="zn-photo" style="aspect-ratio: 3 / 4"><img src={unsplash(p.photo, 600, 800)} alt={`${p.name}, ${p.size}`} loading="lazy" /></div>
+    <div class="zn-card-body">
+      <h3 class="zn-product-name">{p.name}</h3>
+      <span class="zn-product-price">{p.size} · {p.price}</span>
+    </div>
+  </a>
+  <a class="text-link order-link" href={`/narudzba?proizvod=${p.slug}`} aria-label={`Naruči: ${p.name}`}>Naruči <Icon name="arrow-right" /></a>
+</article>
+
+<style>
+  .zn-photo img { aspect-ratio: 3 / 4; }
+  .order-link { margin-top: var(--space-12); }
+</style>

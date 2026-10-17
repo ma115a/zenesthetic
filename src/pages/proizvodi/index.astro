@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import OrderSteps from '../../components/OrderSteps.astro';
+import { products } from '../../data/site';
+---
+<Base title="Proizvodi za njegu · Zen" description="Proizvodi za njegu lica i tijela koje preporučujem nakon tretmana. Naručite putem forme.">
+  <PageHead
+    title="Njega i"
+    accent="kod kuće"
+    lead="Proizvodi koje preporučujem nakon tretmana. Nema korpe ni plaćanja na sajtu: pošaljite narudžbu, a ja vam potvrđujem dostupnost i cijenu."
+    crumbs={[{ label: 'Proizvodi' }]}
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <div class="toolbar" role="group" aria-label="Filtriraj proizvode">
+        <button type="button" class="chip" aria-pressed="true" data-filter="sve">Svi <span>{products.length}</span></button>
+        <button type="button" class="chip" aria-pressed="false" data-filter="lice">Lice <span>{products.filter((p) => p.area === 'lice').length}</span></button>
+        <button type="button" class="chip" aria-pressed="false" data-filter="tijelo">Tijelo <span>{products.filter((p) => p.area === 'tijelo').length}</span></button>
+      </div>
+      <div class="product-grid" data-products>
+        {products.map((p, i) => <div class="cell" data-area={p.area}><ProductCard product={p} delay={(i % 4) * 80} /></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section mist" aria-labelledby="kako-naslov">
+    <div class="wrap">
+      <div class="section-head"><h2 id="kako-naslov" class="zn-heading zn-heading-h2">Kako <em class="zn-accent">naručiti</em></h2><a class="zn-btn" href="/narudzba">Otvori formu za narudžbu</a></div>
+      <OrderSteps />
+    </div>
+  </section>
+</Base>
+
+<script>
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  const cells = [...document.querySelectorAll<HTMLElement>('[data-products] .cell')];
+  buttons.forEach((b) => b.addEventListener('click', () => {
+    const f = b.dataset.filter;
+    buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    cells.forEach((c) => { c.hidden = f !== 'sve' && c.dataset.area !== f; });
+  }));
+</script>
+
+<style>
+  .mist { background: var(--surface-mist); }
+  .cell { display: contents; }
+</style>

@@ -1,0 +1,64 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import TreatmentMenu from '../../components/TreatmentMenu.astro';
+import VisitSteps from '../../components/VisitSteps.astro';
+import EnquiryBand from '../../components/EnquiryBand.astro';
+import { devices } from '../../data/site';
+---
+<Base title="Tretmani lica i tijela · Zen" description="Svi tretmani lica i tijela, s trajanjem i preporučenim brojem tretmana.">
+  <PageHead
+    title="Tretmani lica"
+    accent="i tijela"
+    lead="Za svaki tretman piše koliko traje i koliko tretmana obično preporučujem. Tačan plan pravimo zajedno, nakon analize kože."
+    crumbs={[{ label: 'Tretmani' }]}
+  >
+    <div class="jump">
+      <a class="zn-btn zn-btn-outline" href="#lice">Lice</a>
+      <a class="zn-btn zn-btn-outline" href="#tijelo">Tijelo</a>
+    </div>
+  </PageHead>
+
+  <section class="section">
+    <div class="wrap"><TreatmentMenu /></div>
+  </section>
+
+  <section class="section visit" aria-labelledby="posjeta-naslov">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="posjeta-naslov" class="zn-heading zn-heading-h2">Kako izgleda <em class="zn-accent">posjeta</em></h2>
+      </div>
+      <VisitSteps />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="uredjaji-naslov">
+    <div class="wrap devices-grid">
+      <h2 id="uredjaji-naslov" class="zn-heading zn-heading-h2">Uređaji s kojima <em class="zn-accent">radim</em></h2>
+      <dl class="devices">
+        {devices.map((d) => (
+          <div class="device" data-reveal>
+            <dt><span class="device-name">{d.name}</span><span class="device-area">{d.area}</span></dt>
+            <dd>{d.text}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <EnquiryBand />
+</Base>
+
+<style>
+  .jump { display: flex; gap: var(--space-8); flex-wrap: wrap; }
+  .visit { background: var(--surface-mist); }
+  .devices-grid { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-80); align-items: start; }
+  .devices { margin: 0; border-top: 1px solid var(--ink); }
+  .device { display: grid; grid-template-columns: 1fr 1.4fr; gap: var(--space-24); padding-block: var(--space-24); border-bottom: 1px solid var(--line); }
+  .device dt { display: grid; gap: var(--space-4); }
+  .device-name { font: 600 20px/28px var(--font-sans); }
+  .device-area { font: 600 11px/16px var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--leaf); }
+  .device dd { margin: 0; color: var(--ink-muted); font-size: 15px; line-height: 24px; }
+  @media (max-width: 900px) { .devices-grid { grid-template-columns: 1fr; gap: var(--space-32); } }
+  @media (max-width: 520px) { .device { grid-template-columns: 1fr; gap: var(--space-8); } }
+</style>

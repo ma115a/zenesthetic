@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { studio, lorem } from '../data/site';
+const sections = [
+  'Koje podatke prikupljam',
+  'Zašto ih prikupljam',
+  'Koliko dugo ih čuvam',
+  'S kim ih dijelim',
+  'Vaša prava',
+  'Fotografije prije i poslije',
+  'Kontakt za pitanja o privatnosti',
+];
+---
+<Base title="Politika privatnosti · Zen" description="Kako studio Zen prikuplja i koristi lične podatke iz forme za upit i narudžbu.">
+  <PageHead title="Politika" accent="privatnosti" crumbs={[{ label: 'Politika privatnosti' }]} />
+  <section class="section">
+    <div class="wrap doc">
+      <p class="draft"><strong>Nacrt:</strong> tekst ispod je privremen. Konačnu politiku privatnosti priprema i odobrava vlasnica studija prije objave sajta.</p>
+      {sections.map((h, i) => (
+        <section>
+          <h2>{i + 1}. {h}</h2>
+          <p>{i % 2 ? lorem.body : lorem.intro}</p>
+        </section>
+      ))}
+      <p class="muted">Rukovalac podacima: {studio.name}, {studio.address}, {studio.email}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .doc { display: grid; gap: var(--space-32); max-width: calc(72ch + 2 * var(--gutter)); }
+  .draft { padding: var(--space-16); background: var(--surface-mist); font-size: 15px; }
+  h2 { font: 600 22px/30px var(--font-sans); margin-bottom: var(--space-12); }
+  .doc section p { color: var(--ink-muted); }
+</style>

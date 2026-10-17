@@ -1,0 +1,48 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props { title: string; description: string; overlayHeader?: boolean }
+const { title, description, overlayHeader = false } = Astro.props;
+---
+<!doctype html>
+<html lang="sr-Latn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+  </head>
+  <body>
+    <a class="skip" href="#sadrzaj">Preskoči na sadržaj</a>
+    <Header overlay={overlayHeader} />
+    <main id="sadrzaj">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      // Reveal only what starts below the fold, so the first frame is always complete.
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce && 'IntersectionObserver' in window) {
+        const items = [...document.querySelectorAll<HTMLElement>('[data-reveal]')]
+          .filter((el) => el.getBoundingClientRect().top > window.innerHeight);
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            e.target.classList.add('reveal-in');
+            e.target.classList.remove('reveal-armed');
+            io.unobserve(e.target);
+          }
+        }, { rootMargin: '0px 0px -10% 0px' });
+        items.forEach((el) => { el.classList.add('reveal-armed'); io.observe(el); });
+      }
+    </script>
+    <style>
+      .skip { position: absolute; left: var(--space-16); top: -100px; z-index: 100; background: var(--ink); color: var(--on-ink); padding: var(--space-12) var(--space-16); font: 600 12px/16px var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; text-decoration: none; }
+      .skip:focus { top: var(--space-16); }
+    </style>
+  </body>
+</html>

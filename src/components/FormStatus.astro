@@ -1,0 +1,14 @@
+---
+import Icon from './Icon.astro';
+import { studio } from '../data/site';
+---
+<p class="pending"><Icon name="clock" size={16} /><span><strong>Privremeno:</strong> forma još nije povezana sa slanjem. Do tada mi pišite na <a href={studio.instagram} target="_blank" rel="noopener">Instagramu</a> ili pozovite {studio.phone}.</span></p>
+<div class="form-done" hidden data-done role="status" tabindex="-1">
+  <strong>Upit nije poslan.</strong>
+  <span>Forma još nije povezana. Pošaljite mi istu poruku na Instagramu ili pozovite {studio.phone}.</span>
+</div>
+
+<style>
+  .pending { display: flex; gap: var(--space-12); align-items: start; padding: var(--space-12) var(--space-16); background: var(--surface-mist); font-size: 14px; line-height: 22px; color: var(--ink); }
+  .pending :global(svg) { flex: none; margin-top: 3px; color: var(--leaf); }
+</style>

@@ -1,0 +1,72 @@
+---
+import { unsplash, type BeforeAfter } from '../data/site';
+
+interface Props { pair: BeforeAfter; ratio?: string; width?: number; id?: string; caption?: boolean }
+const { pair, ratio = '4 / 5', width = 1000, id = 'ba', caption = true } = Astro.props;
+const [rw, rh] = ratio.split('/').map((n) => Number(n.trim()));
+const h = Math.round((width * rh) / rw);
+---
+<figure class="ba" data-ba style={`--pos: 50%; aspect-ratio: ${ratio}`}>
+  <img class="before" src={unsplash(pair.before, width, h)} alt={`Prije: ${pair.treatment}`} loading="lazy" draggable="false" data-ba-before />
+  <img class="after" src={unsplash(pair.after, width, h)} alt={`Poslije: ${pair.treatment}, ${pair.sessions}`} loading="lazy" draggable="false" data-ba-after />
+  <span class="tag tag-before" aria-hidden="true">Prije</span>
+  <span class="tag tag-after" aria-hidden="true">Poslije</span>
+  <span class="handle" aria-hidden="true">
+    <span class="knob">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M9 6 3 12l6 6M15 6l6 6-6 6"/></svg>
+    </span>
+  </span>
+  <label class="visually-hidden" for={`${id}-range`}>Uporedi prije i poslije: {pair.treatment}</label>
+  <input class="range" id={`${id}-range`} type="range" min="0" max="100" value="50" step="1" aria-valuetext="50% poslije" data-ba-range />
+  {caption && (
+    <figcaption>
+      <span class="what"><strong data-ba-name>{pair.treatment}</strong><span data-ba-sessions>{pair.sessions}</span></span>
+      {pair.placeholder && <span class="placeholder" data-ba-placeholder>Privremeno: ista fotografija na obje strane dok ne stignu stvarne fotografije uz saglasnost klijentice.</span>}
+    </figcaption>
+  )}
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((fig) => {
+    const range = fig.querySelector<HTMLInputElement>('[data-ba-range]')!;
+    const set = (v: number) => {
+      fig.style.setProperty('--pos', `${v}%`);
+      range.setAttribute('aria-valuetext', `${Math.round(v)}% poslije`);
+    };
+    range.addEventListener('input', () => set(Number(range.value)));
+    // Gentle hint on first view: the divider eases from 50% to 62% and back, once.
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        if (range.value !== '50') return;
+        fig.classList.add('hinting');
+        set(62);
+        setTimeout(() => { set(50); setTimeout(() => fig.classList.remove('hinting'), 700); }, 700);
+      }, { threshold: 0.6 });
+      io.observe(fig);
+    }
+  });
+</script>
+
+<style>
+  .ba { position: relative; margin: 0; overflow: hidden; background: var(--surface-mist); user-select: none; touch-action: pan-y; }
+  .ba img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  .after { clip-path: inset(0 0 0 var(--pos)); }
+  .hinting .after { transition: clip-path 700ms var(--ease-out); }
+  .hinting .handle { transition: left 700ms var(--ease-out); }
+  .tag { position: absolute; top: var(--space-16); padding: var(--space-4) var(--space-12); background: var(--surface); color: var(--ink); font: 600 11px/16px var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; pointer-events: none; }
+  .tag-before { left: var(--space-16); }
+  .tag-after { right: var(--space-16); background: var(--sage); }
+  .handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: var(--surface); pointer-events: none; }
+  .knob { position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 48px; height: 48px; transform: translate(-50%, -50%); background: var(--surface); color: var(--ink); box-shadow: 0 2px 12px #1f2a2433; }
+  .range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
+  .range:focus-visible ~ .handle .knob, .ba:has(.range:focus-visible) .knob { outline: 2px solid var(--ink); outline-offset: 2px; }
+  figcaption { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: var(--space-8); padding: var(--space-16); background: linear-gradient(0deg, #ffffffeb 0%, #ffffffeb 70%, #ffffff00 100%); pointer-events: none; }
+  .what { display: flex; justify-content: space-between; gap: var(--space-16); font-size: 14px; line-height: 20px; }
+  .what strong { font-weight: 600; }
+  .what span { color: var(--ink-muted); }
+  .placeholder { font-size: 12px; line-height: 18px; color: var(--ink-muted); }
+  @media (prefers-reduced-motion: reduce) { .hinting .after, .hinting .handle { transition: none; } }
+</style>

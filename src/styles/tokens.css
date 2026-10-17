@@ -1,0 +1,32 @@
+/* Zen tokens, generated from tokens.json */
+:root {
+  --surface: #ffffff;
+  --surface-mist: #eef4ec;
+  --line: #d6e0d3;
+  --ink: #1f2a24;
+  --ink-muted: #55625a;
+  --on-ink: #ffffff;
+  --on-ink-muted: #c3d0c0;
+  --sage: #aed7a4;
+  --on-sage: var(--ink);
+  --leaf: #3f6b39;
+  --danger: #a3352b;
+  --photo-from: #eef4ec;
+  --photo-to: #aed7a4;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-80: 80px;
+  --space-120: 120px;
+  --radius-none: 0;
+  --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px #1f2a24;
+  --content-max: 1200px;
+  --text-max: 60ch;
+  --control-height: 48px;
+  --font-sans: Manrope, "Helvetica Neue", Arial, sans-serif;
+  --font-accent: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+}

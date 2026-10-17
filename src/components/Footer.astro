@@ -1,0 +1,59 @@
+---
+import Icon from './Icon.astro';
+import { nav, studio } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div class="brand">
+      <a class="wordmark" href="/">{studio.name}</a>
+      <p>Tretmani lica i tijela naprednim uređajima, uz više od 10 godina iskustva.</p>
+    </div>
+    <div>
+      <h2 class="label">Stranice</h2>
+      <ul>{nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
+    </div>
+    <div>
+      <h2 class="label">Kontakt</h2>
+      <ul class="contact">
+        <li><Icon name="pin" /><span>{studio.address}</span></li>
+        <li><Icon name="phone" /><span>{studio.phone}</span></li>
+        <li><Icon name="instagram" /><a href={studio.instagram} target="_blank" rel="noopener">{studio.instagramHandle}</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="label">Radno vrijeme</h2>
+      <dl class="hours">
+        {studio.hours.map(([d, h]) => <div><dt>{d}</dt><dd>{h}</dd></div>)}
+      </dl>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="legal">
+      <span>© {year} {studio.name}</span>
+      <a href="/privatnost">Politika privatnosti</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer { background: var(--ink); color: var(--on-ink-muted); padding-block: var(--space-80) var(--space-32); font-size: 14px; line-height: 22px; }
+  .site-footer ::selection { background: var(--sage); color: var(--ink); }
+  .site-footer :focus-visible { outline-color: var(--sage); }
+  .grid { display: grid; grid-template-columns: 2fr 1fr 1.4fr 1.2fr; gap: var(--space-48); }
+  .wordmark { display: inline-block; font: 700 18px/1 var(--font-sans); letter-spacing: 0.32em; text-transform: uppercase; color: var(--on-ink); text-decoration: none; margin-bottom: var(--space-16); }
+  .brand p { max-width: 32ch; }
+  .label { font: 600 11px/16px var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--on-ink); margin-bottom: var(--space-16); }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-8); }
+  a { color: var(--on-ink-muted); text-decoration: none; }
+  a:hover { color: var(--on-ink); text-decoration: underline; }
+  .contact li { display: flex; gap: var(--space-12); align-items: start; }
+  .contact svg { flex: none; margin-top: 2px; color: var(--sage); }
+  .hours { margin: 0; display: grid; gap: var(--space-8); }
+  .hours div { display: grid; }
+  .hours dt { color: var(--on-ink); }
+  .hours dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .legal { display: flex; justify-content: space-between; gap: var(--space-16); margin-top: var(--space-80); padding-top: var(--space-24); border-top: 1px solid #ffffff24; font-size: 12px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
+  @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } .legal { flex-direction: column; } }
+</style>
