@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard.astro';
 import EnquiryBand from '../components/EnquiryBand.astro';
 import Testimonials from '../components/Testimonials.astro';
 import BeforeAfter from '../components/BeforeAfter.astro';
+import Certificates from '../components/Certificates.astro';
 import { unsplash, devices, galleryItems, products, photos, studio, beforeAfter } from '../data/site';
 const tiles = galleryItems.filter((g) => !beforeAfter.some((b) => b.after === g.photo || b.before === g.photo)).slice(0, 3);
 ---
@@ -21,15 +22,37 @@ const tiles = galleryItems.filter((g) => !beforeAfter.some((b) => b.after === g.
       src={unsplash(photos.hero, 1920)}
       srcset={`${unsplash(photos.hero, 900)} 900w, ${unsplash(photos.hero, 1400)} 1400w, ${unsplash(photos.hero, 2200)} 2200w`}
       sizes="100vw"
-      alt="Tretman lica uređajem u rukama specijalistkinje"
+      alt="Tretman lica u studiju"
       fetchpriority="high"
     />
     <div class="hero-copy wrap">
       <h1 id="hero-naslov" class="zn-heading zn-heading-display">Rezultati koje <em class="zn-accent">vidite</em></h1>
       <p class="hero-line">Tretmani lica i tijela naprednim uređajima, uz više od 10 godina iskustva.</p>
       <div class="hero-actions">
-        <a class="zn-btn" href="#upit">Pošalji upit <Icon name="arrow-right" /></a>
+        <a class="zn-btn hero-primary" href="#upit">Pošalji upit <Icon name="arrow-right" /></a>
         <a class="zn-btn zn-btn-outline on-photo" href="#tretmani">Pogledaj tretmane</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section class="products section" aria-labelledby="proizvodi-naslov">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="head-stack">
+          <h2 id="proizvodi-naslov" class="zn-heading zn-heading-h2">Njega i <em class="zn-accent">kod kuće</em></h2>
+          <p class="muted">Proizvodi koje preporučujem nakon tretmana. Naručite putem forme, a ja vam javljam dostupnost.</p>
+        </div>
+        <div class="rail-actions">
+          <div class="rail-nav">
+            <button type="button" class="rail-btn prev" data-rail-prev aria-label="Prethodni proizvodi" disabled><Icon name="arrow-right" /></button>
+            <button type="button" class="rail-btn" data-rail-next aria-label="Sljedeći proizvodi"><Icon name="arrow-right" /></button>
+          </div>
+          <a class="text-link" href="/proizvodi">Svi proizvodi <Icon name="arrow-right" /></a>
+        </div>
+      </div>
+      <div class="rail" data-rail tabindex="0" role="region" aria-label="Proizvodi, listajte vodoravno">
+        {products.map((p, i) => <ProductCard product={p} delay={i * 80} reveal={i < 4} />)}
       </div>
     </div>
   </section>
@@ -60,6 +83,11 @@ const tiles = galleryItems.filter((g) => !beforeAfter.some((b) => b.after === g.
         <a class="zn-btn zn-btn-outline" href="/o-meni">Više o meni</a>
       </div>
     </div>
+  </section>
+
+  <!-- Certificates: continues the specialist's mist block -->
+  <section class="certificates section" aria-labelledby="certifikati-naslov">
+    <div class="wrap"><Certificates limit={6} link /></div>
   </section>
 
   <!-- Technology -->
@@ -103,51 +131,58 @@ const tiles = galleryItems.filter((g) => !beforeAfter.some((b) => b.after === g.
 
   <Testimonials />
 
-  <!-- Products -->
-  <section class="products section" aria-labelledby="proizvodi-naslov">
-    <div class="wrap">
-      <div class="section-head">
-        <div class="head-stack">
-          <h2 id="proizvodi-naslov" class="zn-heading zn-heading-h2">Njega i <em class="zn-accent">kod kuće</em></h2>
-          <p class="muted">Proizvodi koje preporučujem nakon tretmana. Naručite putem forme, a ja vam javljam dostupnost.</p>
-        </div>
-        <a class="text-link" href="/proizvodi">Svi proizvodi <Icon name="arrow-right" /></a>
-      </div>
-      <div class="product-grid">
-        {products.slice(0, 4).map((p, i) => <ProductCard product={p} delay={i * 80} />)}
-      </div>
-    </div>
-  </section>
-
   <EnquiryBand />
 </Base>
 
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rail]').forEach((rail) => {
+    const section = rail.closest('section')!;
+    const prev = section.querySelector<HTMLButtonElement>('[data-rail-prev]')!;
+    const next = section.querySelector<HTMLButtonElement>('[data-rail-next]')!;
+    const step = () => (rail.firstElementChild as HTMLElement).offsetWidth + parseFloat(getComputedStyle(rail).columnGap);
+    const update = () => {
+      prev.disabled = rail.scrollLeft < 4;
+      next.disabled = rail.scrollLeft + rail.clientWidth > rail.scrollWidth - 4;
+    };
+    prev.addEventListener('click', () => rail.scrollBy({ left: -step(), behavior: 'smooth' }));
+    next.addEventListener('click', () => rail.scrollBy({ left: step(), behavior: 'smooth' }));
+    rail.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  });
+</script>
+
 
 <style>
-  /* Hero */
-  .hero { position: relative; display: flex; align-items: flex-end; min-height: max(560px, calc(100svh - 168px)); overflow: hidden; isolation: isolate; background: var(--surface-mist); }
-  .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 62% 40%; z-index: -2; animation: hero-drift 14s var(--ease-out) both; }
-  .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #ffffffcc 0%, #ffffff00 18%), linear-gradient(90deg, #ffffffeb 0%, #ffffffc7 30%, #ffffff00 62%), linear-gradient(0deg, #ffffffb3 0%, #ffffff00 40%); }
+  /* Hero (warm and low-key: dark ink wash, white type, sage accent) */
+  .hero { position: relative; display: flex; align-items: flex-end; min-height: max(560px, calc(100svh - 168px)); overflow: hidden; isolation: isolate; background: var(--ink); }
+  .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 45%; z-index: -2; animation: hero-drift 14s var(--ease-out) both; }
+  .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #1f2a24e6 0%, #1f2a24b3 34%, #1f2a2400 70%), linear-gradient(0deg, #1f2a2499 0%, #1f2a2400 40%), linear-gradient(180deg, #1f2a2480 0%, #1f2a2400 18%); }
   @keyframes hero-drift { from { transform: scale(1.06); } to { transform: scale(1); } }
   .hero-copy { padding-block: var(--space-120) var(--space-80); display: grid; gap: var(--space-24); justify-items: start; }
-  .hero .zn-heading-display { font-size: clamp(44px, 6.4vw, 88px); line-height: 0.95; max-width: 9.5em; }
-  .hero .zn-heading-display .zn-accent { font-size: 1.14em; }
-  .hero-line { font-size: 18px; line-height: 30px; max-width: 34ch; color: var(--ink); }
+  .hero .zn-heading-display { font-size: clamp(44px, 6.4vw, 88px); line-height: 0.95; max-width: 9.5em; color: var(--on-ink); }
+  .hero .zn-heading-display .zn-accent { font-size: 1.14em; color: var(--sage); }
+  .hero-line { font-size: 18px; line-height: 30px; max-width: 34ch; color: var(--on-ink-muted); }
   .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-8); }
-  .zn-btn-outline.on-photo { background: #ffffffb3; }
-  .zn-btn-outline.on-photo:hover { background: var(--ink); }
+  .hero-primary { background: var(--sage); border-color: var(--sage); color: var(--ink); }
+  .hero-primary:hover { background: var(--on-ink); border-color: var(--on-ink); color: var(--ink); }
+  .zn-btn-outline.on-photo { background: transparent; border-color: var(--on-ink); color: var(--on-ink); }
+  .zn-btn-outline.on-photo:hover { background: var(--on-ink); border-color: var(--on-ink); color: var(--ink); }
+  .hero .zn-btn:focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; box-shadow: none; }
   @media (prefers-reduced-motion: reduce) { .hero-img { animation: none; } }
   @media (max-width: 760px) {
     .hero { min-height: 640px; }
-    .hero-img { object-position: 70% 30%; }
-    .hero::after { background: linear-gradient(0deg, #ffffff 0%, #fffffff0 38%, #ffffff00 70%); }
+    .hero-img { object-position: 65% 45%; }
+    .hero::after { background: linear-gradient(0deg, #1f2a24f2 0%, #1f2a24cc 42%, #1f2a2400 75%), linear-gradient(180deg, #1f2a2480 0%, #1f2a2400 20%); }
     .hero-copy { padding-block: var(--space-80) var(--space-48); }
   }
 
-  .menu { padding-top: var(--space-80); }
+  .products { padding-top: var(--space-80); }
+  .menu { padding-top: 0; }
 
   /* About */
   .about { background: var(--surface-mist); }
+  .certificates { background: var(--surface-mist); padding-top: 0; }
   .about-grid { display: grid; grid-template-columns: 5fr 6fr; gap: var(--space-80); align-items: center; }
   .about-photo { position: relative; }
   .about-photo img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
@@ -182,4 +217,18 @@ const tiles = galleryItems.filter((g) => !beforeAfter.some((b) => b.after === g.
   @media (max-width: 680px) { .gallery-grid { grid-template-columns: 1fr 1fr; } .g1 { grid-column: span 2; grid-row: auto; } .g1 :global(.ba) { aspect-ratio: 4 / 5 !important; height: auto; min-height: 0; } }
 
   .head-stack { display: grid; gap: var(--space-12); max-width: 52ch; }
+
+  /* Products rail: four cards in view, the rest one swipe or arrow away */
+  .rail-actions { display: flex; align-items: center; gap: var(--space-24); }
+  .rail-nav { display: flex; gap: var(--space-8); }
+  .rail-btn { display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0; background: none; border: 1px solid var(--ink); color: var(--ink); cursor: pointer; transition: background-color 200ms ease, color 200ms ease, opacity 200ms ease; }
+  .rail-btn:hover:not(:disabled) { background: var(--ink); color: var(--surface); }
+  .rail-btn:disabled { opacity: 0.3; cursor: default; }
+  .rail-btn.prev :global(svg) { transform: scaleX(-1); }
+  .rail { --per-view: 4; display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - (var(--per-view) - 1) * var(--space-24)) / var(--per-view)); column-gap: var(--space-24); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail > :global(*) { scroll-snap-align: start; }
+  .rail:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+  @media (max-width: 900px) { .rail { --per-view: 2.3; column-gap: var(--space-16); grid-auto-columns: calc((100% - 2 * var(--space-16)) / var(--per-view)); } }
+  @media (max-width: 520px) { .rail { --per-view: 1.4; grid-auto-columns: calc((100% - var(--space-16)) / var(--per-view)); } .rail-nav { display: none; } }
 </style>

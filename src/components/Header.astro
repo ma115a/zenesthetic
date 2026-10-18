@@ -9,7 +9,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 ---
 <header class:list={['site-header', { overlay }]} data-header>
   <div class="bar wrap">
-    <a class="wordmark" href="/" aria-label={`${studio.name}, početna`}>{studio.name}</a>
+    <a class="wordmark" href="/" aria-label={`${studio.name} esthetic, početna`}><span class="logo" aria-hidden="true"></span></a>
     <nav class="links" aria-label="Glavna navigacija">
       {nav.map((item) => <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>)}
     </nav>
@@ -55,11 +55,23 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 </script>
 
 <style>
-  .site-header { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--line); transition: background-color 300ms ease, border-color 300ms ease; }
+  .site-header { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--line); transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease; }
   .site-header.overlay { position: fixed; inset: 0 0 auto 0; background: transparent; border-bottom-color: transparent; }
+  .site-header.overlay:not(.scrolled):not(.menu-open) { color: var(--on-ink); }
+  .site-header.overlay:not(.scrolled):not(.menu-open) .wordmark,
+  .site-header.overlay:not(.scrolled):not(.menu-open) .links a,
+  .site-header.overlay:not(.scrolled):not(.menu-open) .ig,
+  .site-header.overlay:not(.scrolled):not(.menu-open) .menu-toggle { color: var(--on-ink); }
+  .site-header.overlay:not(.scrolled):not(.menu-open) .wordmark { color: var(--sage); }
+  .site-header.overlay:not(.scrolled):not(.menu-open) .ig:hover { color: var(--sage); }
+  .site-header.overlay:not(.scrolled):not(.menu-open) .header-cta { background: var(--sage); border-color: var(--sage); color: var(--ink); }
+  .site-header.overlay:not(.scrolled):not(.menu-open) .header-cta:hover { background: var(--on-ink); border-color: var(--on-ink); color: var(--ink); }
+  .site-header.overlay:not(.scrolled):not(.menu-open) a:focus-visible,
+  .site-header.overlay:not(.scrolled):not(.menu-open) button:focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; box-shadow: none; }
   .site-header.overlay.scrolled, .site-header.overlay.menu-open { background: var(--surface); border-bottom-color: var(--line); }
   .bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-24); height: 80px; }
-  .wordmark { font: 700 18px/1 var(--font-sans); letter-spacing: 0.32em; text-transform: uppercase; text-decoration: none; color: var(--ink); padding-left: 0.32em; margin-left: -0.32em; }
+  .wordmark { display: inline-flex; color: var(--leaf); transition: color 300ms ease; }
+  .wordmark .logo { height: 70px; }
   .links { display: flex; gap: var(--space-32); }
   .links a { font: 600 12px/16px var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; text-decoration: none; padding-block: var(--space-8); background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 400ms var(--ease-out); }
   .links a:hover, .links a[aria-current='page'] { background-size: 100% 1px; }
@@ -78,5 +90,6 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
     .links, .header-cta { display: none; }
     .menu-toggle { display: inline-grid; }
     .bar { height: 64px; }
+    .wordmark .logo { height: 54px; }
   }
 </style>

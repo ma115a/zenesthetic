@@ -1,0 +1,80 @@
+---
+// Certificates as hairline rows: year, course, issuer. A row with a scan opens it in a dialog.
+import Icon from './Icon.astro';
+import { certificates } from '../data/site';
+interface Props { limit?: number; link?: boolean }
+const { limit, link = false } = Astro.props;
+const list = limit ? certificates.slice(0, limit) : certificates;
+---
+{certificates.length > 0 && (
+  <div class="certs-block">
+    <div class="section-head">
+      <div class="head-stack">
+        <h2 id="certifikati-naslov" class="zn-heading zn-heading-h2">Edukacije i <em class="zn-accent">certifikati</em></h2>
+        <p class="muted">{certificates.length} završenih edukacija i certifikata, uz redovno usavršavanje svake godine.</p>
+      </div>
+      {link && certificates.length > list.length && (
+        <a class="text-link" href="/o-meni#certifikati">Svi certifikati <Icon name="arrow-right" /></a>
+      )}
+    </div>
+    <ul class="certs">
+      {list.map((c, i) => (
+        <li data-reveal style={`--delay: ${(i % 2) * 80}ms`}>
+          <span class="year">{c.year}</span>
+          <span class="what">
+            {c.image
+              ? <button type="button" class="title cert-open" data-src={c.image} data-title={c.title}>{c.title} <Icon name="arrow-up-right" size={16} /></button>
+              : <strong class="title">{c.title}</strong>}
+            <span class="issuer">{c.issuer}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+    {list.some((c) => c.image) && (
+      <dialog class="cert-dialog" aria-label="Certifikat">
+        <button type="button" class="cert-close" aria-label="Zatvori"><Icon name="close" /></button>
+        <img alt="" />
+        <p class="cert-caption"></p>
+      </dialog>
+    )}
+  </div>
+)}
+
+<script>
+  document.querySelectorAll<HTMLElement>('.certs-block').forEach((block) => {
+    const dialog = block.querySelector<HTMLDialogElement>('.cert-dialog');
+    if (!dialog) return;
+    const img = dialog.querySelector('img')!;
+    const caption = dialog.querySelector('.cert-caption')!;
+    block.querySelectorAll<HTMLButtonElement>('.cert-open').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        img.src = btn.dataset.src!;
+        img.alt = btn.dataset.title!;
+        caption.textContent = btn.dataset.title!;
+        dialog.showModal();
+      }),
+    );
+    dialog.querySelector('.cert-close')!.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+  });
+</script>
+
+<style>
+  .head-stack { display: grid; gap: var(--space-12); max-width: 52ch; }
+  .certs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--space-48); border-top: 1px solid var(--ink); }
+  .certs li { display: grid; grid-template-columns: 4.5ch 1fr; gap: var(--space-24); align-items: baseline; padding-block: var(--space-24); border-bottom: 1px solid var(--line); }
+  .year { font: 400 italic 22px/28px var(--font-accent); color: var(--leaf); font-variant-numeric: tabular-nums; }
+  .what { display: grid; gap: var(--space-4); }
+  .title { font: 600 18px/26px var(--font-sans); color: var(--ink); }
+  button.title { all: unset; font: 600 18px/26px var(--font-sans); cursor: pointer; display: inline-flex; gap: var(--space-8); align-items: center; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+  button.title:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .issuer { font-size: 15px; line-height: 24px; color: var(--ink-muted); }
+  @media (max-width: 760px) { .certs { grid-template-columns: 1fr; } }
+
+  .cert-dialog { border: 0; padding: var(--space-24); max-width: min(92vw, 900px); background: var(--surface); }
+  .cert-dialog::backdrop { background: #1f2a24cc; }
+  .cert-dialog img { max-height: 78vh; width: auto; margin-inline: auto; }
+  .cert-caption { margin-top: var(--space-16); font-weight: 600; }
+  .cert-close { all: unset; cursor: pointer; display: flex; margin-left: auto; margin-bottom: var(--space-16); padding: var(--space-4); }
+  .cert-close:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+</style>

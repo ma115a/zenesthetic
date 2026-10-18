@@ -83,9 +83,8 @@ const facts = [
             <a class="zn-card" href={`/tretmani/${r.slug}`} data-reveal>
               <div class="zn-photo" style="aspect-ratio: 4 / 5"><img src={unsplash(r.photo, 700, 875)} alt="" loading="lazy" /></div>
               <div class="zn-card-body">
-                <span class="zn-card-kicker">{areaLabel[r.area]}</span>
                 <h3 class="zn-card-title"><span>{r.name}</span><Icon name="arrow-up-right" /></h3>
-                <span class="zn-card-meta">{r.duration} · {r.sessions}</span>
+                <span class="zn-card-meta">{areaLabel[r.area]} · {r.duration} · {r.sessions}</span>
               </div>
             </a>
           ))}

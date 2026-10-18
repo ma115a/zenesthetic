@@ -3,10 +3,9 @@ import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import Testimonials from '../components/Testimonials.astro';
 import EnquiryBand from '../components/EnquiryBand.astro';
+import Certificates from '../components/Certificates.astro';
 import { lorem, photos, studio, unsplash } from '../data/site';
 
-// Shown only when real certificates exist: add { title, issuer, year, image } entries.
-const certificates: { title: string; issuer: string; year: string; image?: string }[] = [];
 const principles = [
   ['Prvo razgovor', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.'],
   ['Tehnologija s razlogom', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.'],
@@ -48,16 +47,9 @@ const principles = [
     </div>
   </section>
 
-  {certificates.length > 0 && (
-    <section class="section" aria-labelledby="certifikati-naslov">
-      <div class="wrap">
-        <div class="section-head"><h2 id="certifikati-naslov" class="zn-heading zn-heading-h2">Edukacije i <em class="zn-accent">certifikati</em></h2></div>
-        <ul class="certs">
-          {certificates.map((c) => <li><strong>{c.title}</strong><span>{c.issuer}</span><span>{c.year}</span></li>)}
-        </ul>
-      </div>
-    </section>
-  )}
+  <section id="certifikati" class="section mist certificates" aria-labelledby="certifikati-naslov">
+    <div class="wrap"><Certificates /></div>
+  </section>
 
   <section class="section studio" aria-labelledby="studio-naslov">
     <div class="wrap studio-grid">
@@ -82,8 +74,7 @@ const principles = [
   .principles div { display: grid; gap: var(--space-12); align-content: start; padding-top: var(--space-24); border-top: 1px solid var(--ink); }
   .principles dt { font: 600 20px/28px var(--font-sans); }
   .principles dd { margin: 0; color: var(--ink-muted); }
-  .certs { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
-  .certs li { display: grid; grid-template-columns: 2fr 1.5fr auto; gap: var(--space-24); padding-block: var(--space-16); border-bottom: 1px solid var(--line); }
+  .certificates { padding-top: 0; }
   .studio-grid { display: grid; grid-template-columns: 7fr 5fr; gap: var(--space-24); align-items: end; }
   .studio-grid h2 { grid-column: 1 / -1; margin-bottom: var(--space-24); }
   .s1 { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }

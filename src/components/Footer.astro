@@ -6,7 +6,7 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="wrap grid">
     <div class="brand">
-      <a class="wordmark" href="/">{studio.name}</a>
+      <a class="wordmark" href="/" aria-label={`${studio.name} esthetic, početna`}><span class="logo" aria-hidden="true"></span></a>
       <p>Tretmani lica i tijela naprednim uređajima, uz više od 10 godina iskustva.</p>
     </div>
     <div>
@@ -41,7 +41,9 @@ const year = new Date().getFullYear();
   .site-footer ::selection { background: var(--sage); color: var(--ink); }
   .site-footer :focus-visible { outline-color: var(--sage); }
   .grid { display: grid; grid-template-columns: 2fr 1fr 1.4fr 1.2fr; gap: var(--space-48); }
-  .wordmark { display: inline-block; font: 700 18px/1 var(--font-sans); letter-spacing: 0.32em; text-transform: uppercase; color: var(--on-ink); text-decoration: none; margin-bottom: var(--space-16); }
+  .wordmark { display: inline-flex; color: var(--sage); margin-bottom: var(--space-24); }
+  .wordmark:hover { color: var(--sage); text-decoration: none; }
+  .wordmark .logo { height: 120px; }
   .brand p { max-width: 32ch; }
   .label { font: 600 11px/16px var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--on-ink); margin-bottom: var(--space-16); }
   ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-8); }

@@ -120,7 +120,7 @@ export const products: Product[] = [
 ];
 
 export const photos = {
-  hero: '1713085085470-fba013d67e65',
+  hero: '1761718209708-9ab9ba1c7252',
   portrait: '1759262151080-e05ba1c6294f',
   device: '1700760933941-3a06a28fbf47',
   studio: '1665231795856-769fb08a90bc',
@@ -135,4 +135,18 @@ export const beforeAfter: BeforeAfter[] = [
   { before: '1675773051474-55c4b7d2cf53', after: '1675773051474-55c4b7d2cf53', treatment: 'Lorem ipsum', area: 'lice', sessions: 'nakon 4 tretmana', placeholder: true },
   { before: '1561228987-8e7379dde477', after: '1561228987-8e7379dde477', treatment: 'Consectetur', area: 'lice', sessions: 'nakon 3 tretmana', placeholder: true },
   { before: '1609542334025-778f9093a234', after: '1609542334025-778f9093a234', treatment: 'Labore et dolore', area: 'tijelo', sessions: 'nakon 8 tretmana', placeholder: true },
+];
+
+// Certificates and courses, newest first. `image` is an optional path under
+// /public (e.g. '/certifikati/hydrafacial.jpg'); with one, the row opens the scan.
+export type Certificate = { title: string; issuer: string; year: string; image?: string };
+export const certificates: Certificate[] = [
+  { title: 'Lorem ipsum napredni tretmani lica', issuer: 'Akademija Lorem', year: '2025' },
+  { title: 'Dolor sit radiofrekvencija', issuer: 'Ipsum Institut', year: '2024' },
+  { title: 'Consectetur mikroiglanje', issuer: 'Dolor Academy', year: '2024' },
+  { title: 'Adipiscing kemijski piling', issuer: 'Akademija Lorem', year: '2023' },
+  { title: 'Sed do eiusmod oblikovanje tijela', issuer: 'Amet Edukacija', year: '2022' },
+  { title: 'Tempor incididunt limfna drenaža', issuer: 'Ipsum Institut', year: '2021' },
+  { title: 'Labore et dolore njega problematične kože', issuer: 'Dolor Academy', year: '2019' },
+  { title: 'Magna aliqua kozmetičarka', issuer: 'Srednja škola Lorem', year: '2015' },
 ];
