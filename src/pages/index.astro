@@ -98,7 +98,7 @@ const tiles = galleryItems.filter((g) => !beforeAfter.some((b) => b.after === g.
         <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Svaki uređaj biramo prema vrsti kože i cilju tretmana.</p>
         <dl class="devices">
           {devices.map((d, i) => (
-            <div class="device" data-reveal style={`--delay: ${i * 80}ms`}>
+            <div class="device">
               <dt><span class="device-name">{d.name}</span><span class="device-area">{d.area}</span></dt>
               <dd>{d.text}</dd>
             </div>
@@ -157,7 +157,7 @@ const tiles = galleryItems.filter((g) => !beforeAfter.some((b) => b.after === g.
   /* Hero (warm and low-key: dark ink wash, white type, sage accent) */
   .hero { position: relative; display: flex; align-items: flex-end; min-height: max(560px, calc(100svh - 168px)); overflow: hidden; isolation: isolate; background: var(--ink); }
   .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 45%; z-index: -2; animation: hero-drift 14s var(--ease-out) both; }
-  .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #1f2a24e6 0%, #1f2a24b3 34%, #1f2a2400 70%), linear-gradient(0deg, #1f2a2499 0%, #1f2a2400 40%), linear-gradient(180deg, #1f2a2480 0%, #1f2a2400 18%); }
+  .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, var(--ink-a90) 0%, var(--ink-a70) 34%, var(--ink-a0) 70%), linear-gradient(0deg, var(--ink-a60) 0%, var(--ink-a0) 40%), linear-gradient(180deg, var(--ink-a50) 0%, var(--ink-a0) 18%); }
   @keyframes hero-drift { from { transform: scale(1.06); } to { transform: scale(1); } }
   .hero-copy { padding-block: var(--space-120) var(--space-80); display: grid; gap: var(--space-24); justify-items: start; }
   .hero .zn-heading-display { font-size: clamp(44px, 6.4vw, 88px); line-height: 0.95; max-width: 9.5em; color: var(--on-ink); }
@@ -173,7 +173,7 @@ const tiles = galleryItems.filter((g) => !beforeAfter.some((b) => b.after === g.
   @media (max-width: 760px) {
     .hero { min-height: 640px; }
     .hero-img { object-position: 65% 45%; }
-    .hero::after { background: linear-gradient(0deg, #1f2a24f2 0%, #1f2a24cc 42%, #1f2a2400 75%), linear-gradient(180deg, #1f2a2480 0%, #1f2a2400 20%); }
+    .hero::after { background: linear-gradient(0deg, var(--ink-a95) 0%, var(--ink-a80) 42%, var(--ink-a0) 75%), linear-gradient(180deg, var(--ink-a50) 0%, var(--ink-a0) 20%); }
     .hero-copy { padding-block: var(--space-80) var(--space-48); }
   }
 
@@ -221,7 +221,7 @@ const tiles = galleryItems.filter((g) => !beforeAfter.some((b) => b.after === g.
   /* Products rail: four cards in view, the rest one swipe or arrow away */
   .rail-actions { display: flex; align-items: center; gap: var(--space-24); }
   .rail-nav { display: flex; gap: var(--space-8); }
-  .rail-btn { display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0; background: none; border: 1px solid var(--ink); color: var(--ink); cursor: pointer; transition: background-color 200ms ease, color 200ms ease, opacity 200ms ease; }
+  .rail-btn { display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0; background: none; border: 1px solid var(--ink); color: var(--ink); cursor: pointer; transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out), opacity 200ms var(--ease-out); }
   .rail-btn:hover:not(:disabled) { background: var(--ink); color: var(--surface); }
   .rail-btn:disabled { opacity: 0.3; cursor: default; }
   .rail-btn.prev :global(svg) { transform: scaleX(-1); }

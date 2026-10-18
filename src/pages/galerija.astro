@@ -86,6 +86,7 @@ const count = (a: string) => galleryItems.filter((g) => g.area === a).length;
   const cells = [...document.querySelectorAll('[data-gallery] > li')];
   buttons.forEach((b) => b.addEventListener('click', () => {
     buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    cells[0]?.parentElement?.classList.add('is-filtered');
     cells.forEach((c) => { c.hidden = b.dataset.filter !== 'sve' && c.dataset.area !== b.dataset.filter; });
   }));
 
@@ -125,7 +126,7 @@ const count = (a: string) => galleryItems.filter((g) => g.area === a).length;
   .cap { display: flex; justify-content: space-between; gap: var(--space-16); padding-top: var(--space-12); font-size: 14px; line-height: 20px; font-weight: 600; }
   .cap .muted { font-weight: 400; }
   .lightbox { width: min(1100px, calc(100vw - 32px)); max-height: calc(100vh - 32px); padding: 0; border: 0; background: var(--surface); color: var(--ink); overflow: visible; }
-  .lightbox::backdrop { background: #1f2a24e6; }
+  .lightbox::backdrop { background: var(--ink-a90); }
   .lightbox figure { margin: 0; }
   .lightbox img { width: 100%; max-height: calc(100vh - 120px); object-fit: contain; background: var(--surface-mist); }
   .lightbox figcaption { padding: var(--space-16) var(--space-24); font-weight: 600; }

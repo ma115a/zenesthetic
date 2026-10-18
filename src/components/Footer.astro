@@ -2,33 +2,43 @@
 import Icon from './Icon.astro';
 import { nav, studio } from '../data/site';
 const year = new Date().getFullYear();
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(studio.address)}`;
+const tel = `tel:${studio.phone.replace(/\s+/g, '')}`;
 ---
 <footer class="site-footer">
-  <div class="wrap grid">
-    <div class="brand">
-      <a class="wordmark" href="/" aria-label={`${studio.name} esthetic, početna`}><span class="logo" aria-hidden="true"></span></a>
-      <p>Tretmani lica i tijela naprednim uređajima, uz više od 10 godina iskustva.</p>
-    </div>
-    <div>
-      <h2 class="label">Stranice</h2>
-      <ul>{nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
-    </div>
-    <div>
-      <h2 class="label">Kontakt</h2>
-      <ul class="contact">
-        <li><Icon name="pin" /><span>{studio.address}</span></li>
-        <li><Icon name="phone" /><span>{studio.phone}</span></li>
-        <li><Icon name="instagram" /><a href={studio.instagram} target="_blank" rel="noopener">{studio.instagramHandle}</a></li>
-      </ul>
-    </div>
-    <div>
-      <h2 class="label">Radno vrijeme</h2>
-      <dl class="hours">
-        {studio.hours.map(([d, h]) => <div><dt>{d}</dt><dd>{h}</dd></div>)}
-      </dl>
-    </div>
-  </div>
   <div class="wrap">
+    <a class="wordmark" href="/" aria-label={`${studio.name} esthetic, početna`}><span class="logo" aria-hidden="true"></span></a>
+
+    <!-- Visit card: the three facts a client needs, set large -->
+    <dl class="facts">
+      <div>
+        <dt>Adresa</dt>
+        <dd>
+          <span class="fact">{studio.address}</span>
+          <a class="fact-link" href={mapUrl} target="_blank" rel="noopener">Otvori mapu <Icon name="arrow-up-right" size={16} /></a>
+        </dd>
+      </div>
+      <div>
+        <dt>Telefon</dt>
+        <dd>
+          <a class="fact" href={tel}>{studio.phone}</a>
+          <a class="fact-link" href={tel}>Pozovite <Icon name="arrow-right" size={16} /></a>
+        </dd>
+      </div>
+      <div>
+        <dt>Radno vrijeme</dt>
+        <dd class="hours">
+          {studio.hours.map(([d, h]) => <span class="hour"><span>{d}</span><span class="time">{h}</span></span>)}
+        </dd>
+      </div>
+    </dl>
+
+    <div class="base">
+      <nav class="pages" aria-label="Stranice u podnožju">
+        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+      </nav>
+      <a class="ig" href={studio.instagram} target="_blank" rel="noopener"><Icon name="instagram" />{studio.instagramHandle}</a>
+    </div>
     <div class="legal">
       <span>© {year} {studio.name}</span>
       <a href="/privatnost">Politika privatnosti</a>
@@ -39,23 +49,37 @@ const year = new Date().getFullYear();
 <style>
   .site-footer { background: var(--ink); color: var(--on-ink-muted); padding-block: var(--space-80) var(--space-32); font-size: 14px; line-height: 22px; }
   .site-footer ::selection { background: var(--sage); color: var(--ink); }
-  .site-footer :focus-visible { outline-color: var(--sage); }
-  .grid { display: grid; grid-template-columns: 2fr 1fr 1.4fr 1.2fr; gap: var(--space-48); }
-  .wordmark { display: inline-flex; color: var(--sage); margin-bottom: var(--space-24); }
-  .wordmark:hover { color: var(--sage); text-decoration: none; }
-  .wordmark .logo { height: 120px; }
-  .brand p { max-width: 32ch; }
-  .label { font: 600 11px/16px var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--on-ink); margin-bottom: var(--space-16); }
-  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-8); }
+  .site-footer :focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; }
   a { color: var(--on-ink-muted); text-decoration: none; }
-  a:hover { color: var(--on-ink); text-decoration: underline; }
-  .contact li { display: flex; gap: var(--space-12); align-items: start; }
-  .contact svg { flex: none; margin-top: 2px; color: var(--sage); }
-  .hours { margin: 0; display: grid; gap: var(--space-8); }
-  .hours div { display: grid; }
-  .hours dt { color: var(--on-ink); }
-  .hours dd { margin: 0; font-variant-numeric: tabular-nums; }
-  .legal { display: flex; justify-content: space-between; gap: var(--space-16); margin-top: var(--space-80); padding-top: var(--space-24); border-top: 1px solid #ffffff24; font-size: 12px; }
-  @media (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
-  @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } .legal { flex-direction: column; } }
+  a:hover { color: var(--on-ink); }
+
+  .wordmark { display: flex; justify-content: center; color: var(--sage); margin-bottom: var(--space-80); }
+  .wordmark .logo { height: 120px; }
+
+  /* Three equal facts, each opened by a hairline, like the step rows elsewhere */
+  .facts { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-48); }
+  .facts > div { display: grid; align-content: start; gap: var(--space-16); padding-top: var(--space-24); border-top: 1px solid var(--on-ink-line); }
+  .facts dt { font: 600 11px/16px var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage); }
+  .facts dd { margin: 0; display: grid; gap: var(--space-12); justify-items: start; }
+  .fact { font: 600 22px/30px var(--font-sans); letter-spacing: -0.01em; color: var(--on-ink); font-variant-numeric: tabular-nums; }
+  a.fact:hover { color: var(--sage); }
+  .fact-link { display: inline-flex; align-items: center; gap: var(--space-8); font: 600 12px/16px var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap; color: var(--on-ink); padding-block: var(--space-4); border-bottom: 1px solid currentColor; }
+  .fact-link:hover { color: var(--sage); }
+  .hours { gap: var(--space-8) !important; }
+  .hour { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-4) var(--space-16); width: 100%; max-width: 340px; font-size: 18px; line-height: 28px; color: var(--on-ink); }
+  .hour .time { font-variant-numeric: tabular-nums; color: var(--on-ink-muted); }
+
+  .base { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-16) var(--space-32); margin-top: var(--space-80); padding-top: var(--space-24); border-top: 1px solid var(--on-ink-line); }
+  .pages { display: flex; flex-wrap: wrap; gap: var(--space-8) var(--space-24); }
+  .pages a { white-space: nowrap; }
+  .ig { display: inline-flex; align-items: center; gap: var(--space-8); white-space: nowrap; }
+  .ig :global(svg) { color: var(--sage); }
+  .legal { display: flex; justify-content: space-between; gap: var(--space-16); margin-top: var(--space-24); font-size: 12px; }
+
+  @media (max-width: 900px) {
+    .facts { grid-template-columns: minmax(0, 1fr); gap: var(--space-32); }
+    .wordmark { margin-bottom: var(--space-48); }
+    .wordmark .logo { height: 96px; }
+  }
+  @media (max-width: 520px) { .legal { flex-direction: column; } .fact { font-size: 20px; line-height: 28px; } }
 </style>

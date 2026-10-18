@@ -1,16 +1,27 @@
 /* Zen tokens, generated from tokens.json */
 :root {
-  --surface: #ffffff;
+  --surface: #fbfcf9;
   --surface-mist: #eef4ec;
   --line: #d6e0d3;
   --ink: #1f2a24;
   --ink-muted: #55625a;
-  --on-ink: #ffffff;
+  --on-ink: #fbfcf9;
   --on-ink-muted: #c3d0c0;
   --sage: #aed7a4;
   --on-sage: var(--ink);
   --leaf: #3f6b39;
   --danger: #a3352b;
+  --ink-a95: #1f2a24f2;
+  --ink-a90: #1f2a24e6;
+  --ink-a80: #1f2a24cc;
+  --ink-a70: #1f2a24b3;
+  --ink-a60: #1f2a2499;
+  --ink-a50: #1f2a2480;
+  --ink-a20: #1f2a2433;
+  --ink-a0: #1f2a2400;
+  --on-ink-line: #ffffff24;
+  --surface-a92: #fbfcf9eb;
+  --surface-a0: #fbfcf900;
   --photo-from: #eef4ec;
   --photo-to: #aed7a4;
   --space-4: 4px;
@@ -23,7 +34,7 @@
   --space-80: 80px;
   --space-120: 120px;
   --radius-none: 0;
-  --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px #1f2a24;
+  --focus-ring: 0 0 0 2px #fbfcf9, 0 0 0 4px #1f2a24;
   --content-max: 1200px;
   --text-max: 60ch;
   --control-height: 48px;

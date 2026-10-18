@@ -10,7 +10,7 @@ const H = headingLevel;
 <section id="upit" class="enquiry section" aria-labelledby="upit-naslov">
   <div class="wrap enquiry-grid">
     <div class="enquiry-copy">
-      <H id="upit-naslov" class="zn-heading zn-heading-h2">{title} <em class="zn-accent">{accent}</em></H>
+      <H id="upit-naslov" class="zn-heading zn-heading-h2">{title}{' '}<em class="zn-accent">{accent}</em></H>
       <p class="lead">Recite mi šta vas zanima i kada vam odgovara. Možete mi pisati i na Instagramu.</p>
       <a class="zn-btn" href={studio.instagram} target="_blank" rel="noopener"><Icon name="instagram" />Pišite na Instagramu</a>
       <ul class="enquiry-details">
@@ -58,7 +58,7 @@ const H = headingLevel;
   .enquiry { background: var(--sage); scroll-margin-top: 64px; }
   .enquiry ::selection { background: var(--ink); color: var(--on-ink); }
   .enquiry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-80); align-items: start; }
-  .enquiry-copy { display: grid; gap: var(--space-24); justify-items: start; position: sticky; top: 104px; }
+  .enquiry-copy { display: grid; gap: var(--space-24); justify-items: start; position: sticky; top: calc(var(--header-h) + var(--space-24)); }
   .enquiry .lead { color: var(--ink); }
   .enquiry-details { list-style: none; margin: var(--space-8) 0 0; padding: 0; display: grid; gap: var(--space-8); font-size: 15px; }
   .enquiry-details li { display: flex; align-items: center; gap: var(--space-12); }
